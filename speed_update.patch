@@ -1,0 +1,124 @@
+diff --git a/js/game.js b/js/game.js
+index 286bba3..8a7e14e 100644
+--- a/js/game.js
++++ b/js/game.js
+@@ -13,7 +13,9 @@ let score = 0;
+ 
+ let speed = 300;
+ 
+-addSpeed = 0;
++var addSpeed = 0;
++var max_update = 80;
++var current_count = 0;
+ 
+ currentSpeed = speed - addSpeed;
+ 
+@@ -51,52 +53,59 @@ function eatTail(head, arr) {
+ }
+ 
+ function drawGame() {
+-	ctx.drawImage(ground, 0, 0);
+-
+-	ctx.drawImage(foodImg, food.x, food.y);
+-
+-	for(let i = 0; i < snake.length; i++) {
+-		ctx.fillStyle = i == 0 ? "blue" : "yellow";
+-		ctx.fillRect(snake[i].x, snake[i].y, box, box);
+-	}
+-
+-	ctx.fillStyle = "white";
+-	ctx.font = "50px Arial";
+-	ctx.fillText(score, box * 2.5, box * 1.7);
+-
+-	//ctx.fillText("Speed:", box * 10.5, box * 1.7);
+-	//ctx.fillText(addSpeed / 25, box * 15.8, box * 1.7);
+-
+-	let snakeX = snake[0].x;
+-	let snakeY = snake[0].y;
+-
+-	if(snakeX == food.x && snakeY == food.y) {
+-		score++;
+-		addSpeed += 25; // не работает :(
+-		food = {
+-			x: Math.floor((Math.random() * 17 + 1)) * box,
+-			y: Math.floor((Math.random() * 15 + 3)) * box,
+-		};
+-	} else
+-		snake.pop();
+-
+-	if(snakeX < box || snakeX > box * 17
+-		|| snakeY < 3 * box || snakeY > box * 17)
+-		clearInterval(game);
+-
+-	if(dir == "left") snakeX -= box;
+-	if(dir == "right") snakeX += box;
+-	if(dir == "up") snakeY -= box;
+-	if(dir == "down") snakeY += box;
+-
+-	let newHead = {
+-		x: snakeX,
+-		y: snakeY
+-	};
+-
+-	eatTail(newHead, snake);
+-
+-	snake.unshift(newHead);
++    if (current_count == max_update) {
++    	ctx.drawImage(ground, 0, 0);
++
++    	ctx.drawImage(foodImg, food.x, food.y);
++
++    	for(let i = 0; i < snake.length; i++) {
++    		ctx.fillStyle = i == 0 ? "blue" : "yellow";
++    		ctx.fillRect(snake[i].x, snake[i].y, box, box);
++    	}
++
++    	ctx.fillStyle = "white";
++    	ctx.font = "50px Arial";
++    	ctx.fillText(score, box * 2.5, box * 1.7);
++
++    	ctx.fillText("Speed:", box * 10.5, box * 1.7);
++    	ctx.fillText(addSpeed / 25, box * 15.8, box * 1.7);
++
++    	let snakeX = snake[0].x;
++    	let snakeY = snake[0].y;
++
++    	if(snakeX == food.x && snakeY == food.y) {
++            max_update -= 10;
++    		score++;
++    		addSpeed += 25; // не работает :(
++    		food = {
++    			x: Math.floor((Math.random() * 17 + 1)) * box,
++    			y: Math.floor((Math.random() * 15 + 3)) * box,
++    		};
++    	} else
++    		snake.pop();
++
++    	if(snakeX < box || snakeX > box * 17
++    		|| snakeY < 3 * box || snakeY > box * 17)
++    		clearInterval(game);
++
++    	if(dir == "left") snakeX -= box;
++    	if(dir == "right") snakeX += box;
++    	if(dir == "up") snakeY -= box;
++    	if(dir == "down") snakeY += box;
++
++    	let newHead = {
++    		x: snakeX,
++    		y: snakeY
++    	};
++
++    	eatTail(newHead, snake);
++
++    	snake.unshift(newHead);
++
++        current_count = 0;
++    } else {
++        current_count += 1;
++    }
+ }
+ 
+-let game = setInterval(drawGame, currentSpeed);
+\ No newline at end of file
++let game = setInterval(drawGame, 0);
+\ No newline at end of file
